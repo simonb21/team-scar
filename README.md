@@ -3,16 +3,22 @@ GAME_NAME here
 
 Commands
 ------------------
-Build and execute the chat module
+Build the chat module
 
 ```
 make
 ```
 
-Compile java files
+Initialize and start the chat server
 
 ```
-make build
+make server
+```
+
+Create a client that will connect to the server
+
+```
+make client
 ```
 
 Clean the bin directory
