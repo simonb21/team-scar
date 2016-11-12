@@ -1,7 +1,7 @@
-GAME_NAME here
+Whack a Mole
 ==================
 
-Commands
+CLI Chat Commands
 ------------------
 Build the chat module
 
