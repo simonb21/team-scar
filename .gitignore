@@ -1,1 +1,7 @@
 /chat/bin/src
+
+/whack-a-mole/bin/config
+/whack-a-mole/bin/state
+/whack-a-mole/bin/main
+
+/whack-a-mole/.metadata
