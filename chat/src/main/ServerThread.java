@@ -47,7 +47,7 @@ public class ServerThread extends Thread {
     *   Receives messages from the server and forwards it to the client *
     *                                                                   *
     *   Parameters                                                      *
-    *   client -> ServerThread that sent the message                    *
+    *   sender -> ServerThread that sent the message                    *
     *   msg    -> The message                                           *
     ********************************************************************/
     public void send(ServerThread sender, String msg) {
