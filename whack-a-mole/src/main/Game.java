@@ -6,22 +6,21 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 import config.GameConfig;
+import state.Lobby;
 import state.Menu;
 import state.Play;
 
 public class Game extends StateBasedGame {
 	
 	public Game() {
-		super(GameConfig.GAME_NAME);
+		super(GameConfig.NAME);
 		
 		this.addState(new Menu());
-		this.addState(new Play());
 	}
 	
 	public void initStatesList(GameContainer gc) throws SlickException {
-		this.getState(GameConfig.MENU_STATE).init(gc, this);
-		this.getState(GameConfig.PLAY_STATE).init(gc, this);
-		this.enterState(GameConfig.MENU_STATE);
+		this.getState(GameConfig.MENU);
+		this.enterState(GameConfig.MENU);
 	}
 
 	public static void main(String[] args) {
@@ -30,8 +29,8 @@ public class Game extends StateBasedGame {
 		try {
 			appgc = new AppGameContainer(new Game());
 			appgc.setDisplayMode(
-				GameConfig.GAME_WIDTH,
-				GameConfig.GAME_HEIGHT,
+				GameConfig.WIDTH,
+				GameConfig.HEIGHT,
 				false
 			);
 			appgc.start();
