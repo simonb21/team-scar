@@ -3,13 +3,13 @@ package config;
 public class GameConfig {
 	
 	// Application Properties 
-	public static final String GAME_NAME = "Whack a Mole";
-	public static final int GAME_WIDTH   = 1080;
-	public static final int GAME_HEIGHT  = 600;
+	public static final String NAME = "Whack a Mole";
+	public static final int WIDTH   = 1024;
+	public static final int HEIGHT  = 600;
 	
 	// Game state identifiers
-	public static final int MENU_STATE   = 1;
-	public static final int LOBBY_STATE  = 2;
-	public static final int PLAY_STATE   = 3;
+	public static final int MENU    = 1;
+	public static final int LOBBY   = 2;
+	public static final int PLAY    = 3;
 	
 }
