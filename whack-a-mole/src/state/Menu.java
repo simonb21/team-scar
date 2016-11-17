@@ -10,9 +10,10 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.Animation;
 
+import config.Config;
 import config.GameConfig;
-import main.LobbyClient;
-import main.LobbyServer;
+import udp.lobby.LobbyClient;
+import udp.lobby.LobbyServer;
 
 public class Menu extends BasicGameState {
 	
@@ -51,22 +52,21 @@ public class Menu extends BasicGameState {
 		
 		if((xpos>340 && xpos<680) && (ypos>250 && ypos<320)) { //Create lobby
 			if(input.isMouseButtonDown(0)) {
-				sbg.addState(new Lobby("host"));
-				sbg.enterState(GameConfig.LOBBY);
-				LobbyServer server = new LobbyServer(2121);
+				((Prompt) sbg.getState(GameConfig.PROMPT)).setType("host");
+				sbg.enterState(GameConfig.PROMPT);
 			}
 		}
 		
 		if((xpos>340 && xpos<680) && (ypos>170 && ypos<240)) { //Join lobby
 			if(input.isMouseButtonDown(0)) {
-				sbg.addState(new Lobby("client"));
-				sbg.enterState(GameConfig.LOBBY);
-				LobbyClient client = new LobbyClient(2121);
+				((Prompt) sbg.getState(GameConfig.PROMPT)).setType("client");
+				sbg.enterState(GameConfig.PROMPT);
 			}
 		}
 		
 		if((xpos>340 && xpos<680) && (ypos>90 && ypos<160)) { //Exit
 			if(input.isMouseButtonDown(0)) {
+				System.out.println("sad");
 				System.exit(0);
 			}
 		}

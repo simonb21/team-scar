@@ -9,17 +9,19 @@ import config.GameConfig;
 import state.Lobby;
 import state.Menu;
 import state.Play;
+import state.Prompt;
 
 public class Game extends StateBasedGame {
 	
 	public Game() {
 		super(GameConfig.NAME);
-		
-		this.addState(new Menu());
 	}
 	
 	public void initStatesList(GameContainer gc) throws SlickException {
-		this.getState(GameConfig.MENU);
+		this.addState(new Menu());
+		this.addState(new Prompt());
+		this.addState(new Lobby());
+		this.addState(new Play());
 		this.enterState(GameConfig.MENU);
 	}
 
