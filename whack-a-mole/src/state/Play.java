@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.Iterator;
 
 import org.lwjgl.input.Mouse;
 import org.newdawn.slick.GameContainer;
@@ -52,10 +53,18 @@ public class Play extends BasicGameState implements Runnable {
 		
 		
 		int i=0;
-		for(Player p: game.getPlayers()) {
+		for(Iterator<Integer> ite=game.getPlayers().keySet().iterator();ite.hasNext();) {
+			int key = ite.next();
+			Player p = game.getPlayers().get(key);
+			
 			g.drawString(p.name, 30, 80+(20*i));
-			g.drawString(Integer.toString(p.getScore()), 130, 80+(20*i));
+			g.drawString(Integer.toString(game.getPlayers().size()), 130, 80+(20*i));
 			i += 1;
+			
+			if(p.id != player.id) {
+				//System.out.println("hey "+p.name + " "+ p.getX() + " " + p.getY());
+				g.drawString(p.name, p.getX(), GameConfig.HEIGHT-p.getY());
+			}
 		}
 		
 		// Show HitBoxes
@@ -79,6 +88,11 @@ public class Play extends BasicGameState implements Runnable {
 		mouse = "Mouse at x: " + xpos + " y: " + ypos;
 		
 		player.setCoords(xpos, ypos);
+		try {
+			inst.send(player.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public int getID() {

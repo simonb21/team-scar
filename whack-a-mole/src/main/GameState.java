@@ -1,14 +1,16 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class GameState {
 	
-	private ArrayList<Player> players;
+	private HashMap<Integer, Player> players;
 	private ArrayList<HitBox> moles;
 	
 	public GameState() {
-		players = new ArrayList<Player>();
+		players = new HashMap<Integer, Player>();
 		moles   = new ArrayList<HitBox>();
 	}
 	
@@ -44,8 +46,9 @@ public class GameState {
 	
 	public String toString() {
 		String temp = "";
-		for(Player p: players) {
-			temp += p.toString();
+		for(Iterator<Integer> ite=players.keySet().iterator();ite.hasNext();) {
+			int key = ite.next();
+			temp += players.get(key).toString();
 			temp += ";";
 		}
 		temp += "_";
@@ -58,10 +61,10 @@ public class GameState {
 	}
 	
 	public void addPlayer(Player p) {
-		players.add(p);
+		players.put(p.id, p);
 	}
 	
-	public ArrayList<Player> getPlayers() {
+	public HashMap<Integer, Player> getPlayers() {
 		return players;
 	}
 

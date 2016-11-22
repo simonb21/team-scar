@@ -21,6 +21,7 @@ import udp.game.GameServer;
 public class Lobby extends BasicGameState {
 	
 	private GameServer server;
+	private Player player;
 	private String username;
 	private String address;
 	private String phase;
@@ -52,7 +53,6 @@ public class Lobby extends BasicGameState {
 		mouse = "Mouse at x: " + xpos + " y: " + ypos;
 		
 		try {
-	        Player player = new Player(username);
         	String message;
         	
 			InetAddress addr = InetAddress.getByName(address);
@@ -60,22 +60,18 @@ public class Lobby extends BasicGameState {
 	        byte[] buffer  = new byte[256];
 			
 	        if(phase.startsWith("START")) {
-				GameState game = new GameState();
-				game.addPlayer(player);
-				game.init();
+				GameState game = parseGame();
 				
 				if(server != null) server.start();
 
 				((Play) sbg.getState(GameConfig.PLAY)).setGame(game);
 				((Play) sbg.getState(GameConfig.PLAY)).setPlayer(player);
 
-				System.out.println("Yujin pogi");
 				((Play) sbg.getState(GameConfig.PLAY)).start("224.0.0.3", 2121);
-				System.out.println("Yujin pogi");
 
 				sbg.enterState(GameConfig.PLAY);
 	        } else if(phase.equals("NEW")) {
-	        	send("JOIN;" + player.toString());
+	        	send("JOIN;" + username);
 	        }
 	        
 	        if(!phase.startsWith("START")) {
@@ -93,7 +89,7 @@ public class Lobby extends BasicGameState {
 			e.printStackTrace();
 		}
 
-		if(server == null) info = "huwaw";
+		if(server == null) info = "Connected to Host";
 		else info = "Waiting for Players " + server.getPlayerCount() + "/" + GameConfig.PLAYERS;
 	}
 	
@@ -126,6 +122,23 @@ public class Lobby extends BasicGameState {
 		this.username = s;
 		this.address = addr;
 		this.port = p;
+	}
+	
+	public GameState parseGame() {
+		GameState game = new GameState();
+		game.init();
+		
+		String[] message = phase.split("_");
+		for(String player: message[1].split(";")) {
+			String[] data = player.split(",");
+			Player p = new Player(data[0]);
+			
+			if(data[0].equals(username)) this.player = p;
+			
+			game.addPlayer(p);
+		}
+		
+		return game;
 	}
 	
 }

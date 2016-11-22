@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.Iterator;
 
 import config.GameConfig;
 import main.GameState;
@@ -62,19 +63,33 @@ public class GameServer implements Runnable {
 	}
 	
 	public void receive(String message) throws IOException {
+		message = message.trim();
+				
 		switch(phase) {
 		case "WAITING":
 			if(message.startsWith("JOIN")) {
-				System.out.println(message);
 				String[] data = message.split(";");
-				String[] info = data[1].split(",");
-				
-				game.addPlayer(new Player(info[0]));
+
+				game.addPlayer(new Player(data[1]));
 				playerCount += 1;
 				
 				if(playerCount == GameConfig.PLAYERS) {
-					send("START");
+					send("START_" + game.toString());
+					phase = "START";
 				} else send("CONNECTED");
+			}
+			break;
+		case "START":
+			String[] data = message.split(",");
+			int key = Integer.parseInt(data[1]);
+			int x   = Integer.parseInt(data[3]);
+			int y   = Integer.parseInt(data[4]);
+			
+			for(Iterator<Integer> ite=game.getPlayers().keySet().iterator(); ite.hasNext();) {
+				key = ite.next();
+				Player p = game.getPlayers().get(key);
+				
+				p.setCoords(x, y);
 			}
 			break;
 		}
