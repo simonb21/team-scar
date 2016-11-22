@@ -36,9 +36,8 @@ public class WhackAMole implements Runnable {
 			int score = Integer.parseInt(player[2]);
 			int x     = Integer.parseInt(player[3]);
 			int y     = Integer.parseInt(player[4]);
-			
+
 			Player p = game.getPlayers().get(id);
-			System.out.println(p.name);
 			p.setScore(score);
 			p.setCoords(x, y);
 		}
@@ -68,7 +67,7 @@ public class WhackAMole implements Runnable {
 		);
 
         socket.send(packet);
-//	    System.out.println("Socket sent msg " + game.toString());
+//	    System.out.println("Socket sent msg " + message);
 	}
 	
 	@Override

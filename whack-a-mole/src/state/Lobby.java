@@ -131,10 +131,12 @@ public class Lobby extends BasicGameState {
 		String[] message = phase.split("_");
 		for(String player: message[1].split(";")) {
 			String[] data = player.split(",");
-			Player p = new Player(data[0]);
+			
+			int id = Integer.parseInt(data[1]);
+			
+			Player p = new Player(id, data[0]);
 			
 			if(data[0].equals(username)) this.player = p;
-			
 			game.addPlayer(p);
 		}
 		

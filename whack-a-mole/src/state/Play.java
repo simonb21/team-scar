@@ -33,9 +33,12 @@ public class Play extends BasicGameState implements Runnable {
 	private TextField tf;
 	private String mouse;
 	private WhackAMole inst;
+	
+	String temp;
 
 	public Play() {
 		this.mouse  = "No Input Yet.";
+		temp = "wow";
 	}
 	
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
@@ -58,7 +61,7 @@ public class Play extends BasicGameState implements Runnable {
 			Player p = game.getPlayers().get(key);
 			
 			g.drawString(p.name, 30, 80+(20*i));
-			g.drawString(Integer.toString(game.getPlayers().size()), 130, 80+(20*i));
+			g.drawString(temp, 130, 80+(20*i));
 			i += 1;
 			
 			if(p.id != player.id) {
@@ -88,6 +91,7 @@ public class Play extends BasicGameState implements Runnable {
 		mouse = "Mouse at x: " + xpos + " y: " + ypos;
 		
 		player.setCoords(xpos, ypos);
+		temp = player.toString();
 		try {
 			inst.send(player.toString());
 		} catch (IOException e) {
@@ -119,10 +123,8 @@ public class Play extends BasicGameState implements Runnable {
 	public void run() {
 		while(true) {
 			try {
-				inst.send(player.toString());
+				// inst.send(player.toString());
 				Thread.sleep(5000);
-			} catch (IOException e) {
-				e.printStackTrace();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

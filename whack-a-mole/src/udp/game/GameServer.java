@@ -85,12 +85,8 @@ public class GameServer implements Runnable {
 			int x   = Integer.parseInt(data[3]);
 			int y   = Integer.parseInt(data[4]);
 			
-			for(Iterator<Integer> ite=game.getPlayers().keySet().iterator(); ite.hasNext();) {
-				key = ite.next();
-				Player p = game.getPlayers().get(key);
-				
-				p.setCoords(x, y);
-			}
+			Player p = game.getPlayers().get(key);
+			p.setCoords(x, y);
 			break;
 		}
 	}
@@ -104,7 +100,7 @@ public class GameServer implements Runnable {
 	            i = (i+1)%21;
 	            
 	        	send(game.toString());
-			    Thread.sleep(3000);
+			    Thread.sleep(300);
 	       }
 		} catch (IOException e) {
 			e.printStackTrace();
