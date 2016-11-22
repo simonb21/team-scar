@@ -16,6 +16,19 @@ public class Player {
 		this.id = count++;
 	}
 	
+	public Player(int id, String name) {
+		this.id	   = id;
+		this.name  = name;
+		this.score = 0;
+	}
+
+	public int getX() {
+		return xpos;
+	}
+
+	public int getY() {
+		return ypos;
+	}
 	
 	public int getScore() {
 		return score;
@@ -36,9 +49,10 @@ public class Player {
 	
 	public String toString() {
 		String temp = "";
-		temp += this.name + ",";
-		temp += this.score + ",";
-		temp += this.xpos + ",";
+		temp += this.name	+ ",";
+		temp += this.id		+ ",";
+		temp += this.score	+ ",";
+		temp += this.xpos	+ ",";
 		temp += this.ypos;
 		
 		return temp;

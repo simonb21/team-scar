@@ -6,8 +6,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
-import org.newdawn.slick.state.BasicGameState;
-
 import state.Play;
 
 public class WhackAMole implements Runnable {
@@ -31,15 +29,18 @@ public class WhackAMole implements Runnable {
 		String[] type = data.split("_");
 		
 		// TODO
-//		for(String temp: type[0].split(";")) {
-//			String[] player = temp.split(",");
-//
-//			int score = Integer.parseInt(player[1]);
-//			int x     = Integer.parseInt(player[2]);
-//			int y     = Integer.parseInt(player[3]);
-//			
-//			game.get
-//		}
+		for(String temp: type[0].split(";")) {
+			String[] player = temp.split(",");
+
+			int id    = Integer.parseInt(player[1]);
+			int score = Integer.parseInt(player[2]);
+			int x     = Integer.parseInt(player[3]);
+			int y     = Integer.parseInt(player[4]);
+
+			Player p = game.getPlayers().get(id);
+			p.setScore(score);
+			p.setCoords(x, y);
+		}
 		
 		// Update Board
 		for(String temp: type[1].split(";")) {
@@ -66,7 +67,7 @@ public class WhackAMole implements Runnable {
 		);
 
         socket.send(packet);
-//	    System.out.println("Socket sent msg " + game.toString());
+//	    System.out.println("Socket sent msg " + message);
 	}
 	
 	@Override

@@ -76,7 +76,6 @@ public class Prompt extends BasicGameState {
 		
 		if((xpos>585 && xpos<695) && (ypos>125 && ypos<190)) {
 			if(input.isMousePressed(0) && !username.trim().equals("")) { // TODO
-				Player player = new Player(username);
 				if(type.equals("host")) {
 					GameServer server = new GameServer("224.0.0.3", 2121);
 					
