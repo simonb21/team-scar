@@ -11,9 +11,9 @@ import state.Menu;
 import state.Play;
 import state.Prompt;
 
-public class Game extends StateBasedGame {
+public class Main extends StateBasedGame {
 	
-	public Game() {
+	public Main() {
 		super(GameConfig.NAME);
 	}
 	
@@ -29,7 +29,7 @@ public class Game extends StateBasedGame {
 		AppGameContainer appgc;
 		
 		try {
-			appgc = new AppGameContainer(new Game());
+			appgc = new AppGameContainer(new Main());
 			appgc.setDisplayMode(
 				GameConfig.WIDTH,
 				GameConfig.HEIGHT,
