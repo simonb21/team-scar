@@ -17,7 +17,7 @@ import config.GameConfig;
 import main.GameState;
 import main.HitBox;
 import main.Player;
-import main.WhackAMole;
+import udp.game.PlayerThread;
 
 public class Play extends BasicGameState implements Runnable {
 	
@@ -28,7 +28,7 @@ public class Play extends BasicGameState implements Runnable {
 	private Image gbg;
 	private TextField tf;
 	private String mouse;
-	private WhackAMole inst;
+	private PlayerThread inst;
 	
 	String temp;
 
@@ -108,7 +108,7 @@ public class Play extends BasicGameState implements Runnable {
 	}
 	
 	public void start(String address, int port) {
-		inst = new WhackAMole(game, this, address, port);
+		inst = new PlayerThread(game, this, address, port);
 		inst.start();
 		
 		Thread t2 = new Thread(this);

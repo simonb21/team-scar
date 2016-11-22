@@ -1,4 +1,4 @@
-package main;
+package udp.game;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -6,9 +6,11 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
+import main.GameState;
+import main.Player;
 import state.Play;
 
-public class WhackAMole implements Runnable {
+public class PlayerThread implements Runnable {
 
 	private Play screen;
 	private GameState game;
@@ -16,7 +18,7 @@ public class WhackAMole implements Runnable {
 	private int port;
 	int i = 20;
 	
-	public WhackAMole(GameState game, Play screen, String address, int port) {
+	public PlayerThread(GameState game, Play screen, String address, int port) {
 		this.game = game;
 		this.screen = screen;
 		this.address = address;
