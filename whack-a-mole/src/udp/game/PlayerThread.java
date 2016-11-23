@@ -30,7 +30,7 @@ public class PlayerThread implements Runnable {
 		
 		String[] type = data.split("_");
 		
-		// TODO
+		// Update Player
 		for(String temp: type[0].split(";")) {
 			String[] player = temp.split(",");
 
@@ -48,14 +48,15 @@ public class PlayerThread implements Runnable {
 		for(String temp: type[1].split(";")) {
 			String[] box = temp.split(",");
 			
-			int index = Integer.parseInt(box[0]);
+			int index = Integer.parseInt(box[0]) % 21;
 			int state = Integer.parseInt(box[1]);
 			
 			game.getMoles().get(index).setUp(state);
+			
 		}
 	}
 	
-	public void send(String message) throws IOException {
+	public synchronized void send(String message) throws IOException {
         byte[] buffer  = new byte[256];
 		InetAddress addr = InetAddress.getByName(address);
         DatagramSocket socket = new DatagramSocket();
@@ -69,7 +70,6 @@ public class PlayerThread implements Runnable {
 		);
 
         socket.send(packet);
-//	    System.out.println("Socket sent msg " + message);
 	}
 	
 	@Override
@@ -87,7 +87,6 @@ public class PlayerThread implements Runnable {
 		    	socket.receive(packet);
 		       
 		    	String data = new String(buffer, 0, buffer.length);
-//		        System.out.println("Socket received " + message);
 		        update(data);
 	       }
 		} catch (IOException e) {

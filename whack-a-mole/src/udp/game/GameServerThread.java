@@ -23,12 +23,12 @@ public class GameServerThread extends Thread {
 		System.out.println("Server listening");
 		try {
 	        InetAddress addr = InetAddress.getByName(address);
-	        byte[] buffer = new byte[256];
 		
 			socket = new MulticastSocket(port+10);
 			socket.joinGroup(addr);	
 			
 			while(true) {
+		        byte[] buffer = new byte[256];
 				DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 		    	socket.receive(packet);
 		    	

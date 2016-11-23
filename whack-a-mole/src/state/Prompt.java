@@ -93,19 +93,6 @@ public class Prompt extends BasicGameState {
 							2121
 					);
 					sbg.enterState(GameConfig.LOBBY);
-					
-//					GameState game = new GameState();
-//					game.addPlayer(player);
-//					game.init();
-//					
-//					((Play) sbg.getState(GameConfig.PLAY)).setGame(game);
-//					((Play) sbg.getState(GameConfig.PLAY)).setPlayer(player);
-//					
-//					System.out.println("Yujin pogi");
-//					((Play) sbg.getState(GameConfig.PLAY)).start("224.0.0.3", 2121);
-//
-//					sbg.enterState(GameConfig.PLAY);
-					// LobbyClient client = new LobbyClient("224.0.0.3", 2121);
 				}
 				clear();
 			}
