@@ -6,12 +6,13 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 import config.GameConfig;
+import main.Game;
 import main.GameState;
 import main.Player;
 
 public class GameServer implements Runnable {
 
-	private GameState game;
+	private GameState state;
 	private String address;
 	private String phase;
 	private int playerCount;
@@ -24,20 +25,23 @@ public class GameServer implements Runnable {
 		this.port = port;
 		this.playerCount = 0;
 		
-		this.game = new GameState();
-		game.init();
+		this.state = new GameState();
+		state.init();
 		
 		Thread listener = new GameServerThread(this);
 		listener.start();
 	}
 	
 	public void start() {
+		Thread g = new Thread(new Game(state));
 		Thread t = new Thread(this);
+		
+		g.start();
 		t.start();
 	}
 	
 	public void setGame(GameState g) {
-		this.game = g;
+		this.state = g;
 	}
 	
 	public int getPlayerCount() {
@@ -63,30 +67,52 @@ public class GameServer implements Runnable {
 	
 	public void receive(String message) throws IOException, InterruptedException {
 		message = message.trim();
-				
+		
 		switch(phase) {
 		case "WAITING":
 			if(message.startsWith("JOIN")) {
 				String[] data = message.split(";");
 
-				game.addPlayer(new Player(data[1]));
+				state.addPlayer(new Player(data[1]));
 				playerCount += 1;
 				
 				if(playerCount == GameConfig.PLAYERS) {
-					send("START_" + game.toString());
+					send("START_" + state.toString());
 					Thread.sleep(100);
 					phase = "START";
 				} else send("CONNECTED");
 			}
 			break;
 		case "START":
-			String[] data = message.split(",");
-			int key = Integer.parseInt(data[1]);
-			int x   = Integer.parseInt(data[3]);
-			int y   = Integer.parseInt(data[4]);
+			// Update Player
+			if(message.startsWith("PLAYER")) {
+				String[] msg  = message.split("_");
+				String[] data = msg[1].split(",");
+				
+				int key   = Integer.parseInt(data[1]);
+				int score = Integer.parseInt(data[2]);
+				int x     = Integer.parseInt(data[3]);
+				int y     = Integer.parseInt(data[4]);
+				
+				Player p = state.getPlayers().get(key);
+				p.setScore(score);
+				p.setCoords(x, y);
+			}
 			
-			Player p = game.getPlayers().get(key);
-			p.setCoords(x, y);
+			// Update Board
+			if(message.startsWith("ACTION")) {
+				String[] msg  = message.split("_");
+				for(String temp: msg[2].split(";")) {
+					String[] box = temp.split(",");
+					
+					int index = Integer.parseInt(box[0]) % 21;
+					int up	  = Integer.parseInt(box[1]);
+					
+					state.getMoles().get(index).setUp(up);
+				}
+			}
+			
+			send(state.toString());
 			break;
 		}
 	}
@@ -96,10 +122,10 @@ public class GameServer implements Runnable {
 		System.out.println("Server running");
 		try {
 	        while(true) {
-	            game.getMoles().get(i).toggle();
-	            i = (i+1)%21;
+//	        	state.getMoles().get(i).toggle();
+//	            i = (i+1)%21;
 	            
-	        	send(game.toString());
+	        	send(state.toString());
 			    Thread.sleep(300);
 	       }
 		} catch (IOException e) {

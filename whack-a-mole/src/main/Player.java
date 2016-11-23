@@ -47,7 +47,7 @@ public class Player {
 		score += points;
 	}
 	
-	public String toString() {
+	public synchronized String toString() {
 		String temp = "";
 		temp += this.name	+ ",";
 		temp += this.id		+ ",";

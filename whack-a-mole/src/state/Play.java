@@ -19,30 +19,29 @@ import main.HitBox;
 import main.Player;
 import udp.game.PlayerThread;
 
-public class Play extends BasicGameState implements Runnable {
+public class Play extends BasicGameState {
 	
 	private GameState game;
 	private Player player;
 	
 	private Image bg;
 	private Image gbg;
+	private Image mole;
 	private TextField tf;
 	private String mouse;
 	private PlayerThread inst;
-	
-	String temp;
 
 	public Play() {
 		this.mouse  = "No Input Yet.";
-		temp = "wow";
 	}
 	
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
 		tf = new TextField(gc, gc.getDefaultFont(), 5, 420, 402, 175);
 		tf.setText("Integrate chat here");
 		
-		bg  = new Image("res/play_bg.png");
-		gbg = new Image("res/game_bg.png");
+		bg   = new Image("res/play_bg.png");
+		gbg  = new Image("res/game_bg.png");
+		mole = new Image("res/mole.png");
 	}
 	
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
@@ -50,6 +49,11 @@ public class Play extends BasicGameState implements Runnable {
 		g.drawImage(gbg, 256, 0);
 		g.drawString(mouse, 10, 580);
 		
+		for(HitBox b: game.getMoles()) {
+			if(b.getUp() == 1) {
+				g.drawImage(mole, b.x, GameConfig.HEIGHT-b.y);
+			}
+		}
 		
 		int i=0;
 		for(Iterator<Integer> ite=game.getPlayers().keySet().iterator();ite.hasNext();) {
@@ -57,7 +61,7 @@ public class Play extends BasicGameState implements Runnable {
 			Player p = game.getPlayers().get(key);
 			
 			g.drawString(p.name, 30, 80+(20*i));
-			g.drawString(temp, 130, 80+(20*i));
+			g.drawString(Integer.toString(p.getScore()), 130, 80+(20*i));
 			i += 1;
 			
 			if(p.id != player.id) {
@@ -67,14 +71,19 @@ public class Play extends BasicGameState implements Runnable {
 		}
 		
 		// Show HitBoxes
-		for(HitBox b: game.getMoles()) {
-			g.drawRect(b.x, GameConfig.HEIGHT-b.y, 70, 50);
-			g.drawString(
-					Integer.toString(b.id) + "." + Integer.toString(b.getUp()),
-					b.x,
-					GameConfig.HEIGHT-b.y
-			);
-		}
+//		for(HitBox b: game.getMoles()) {
+//			g.drawRect(
+//					b.x, 
+//					GameConfig.HEIGHT-b.y, 
+//					GameConfig.MOLEWIDTH, 
+//					GameConfig.MOLEHEIGHT
+//			);
+//			g.drawString(
+//					Integer.toString(b.getUp()),
+//					b.x,
+//					GameConfig.HEIGHT-b.y
+//			);
+//		}
 		
 		g.drawRect(412, 420, 607, 175);
 		tf.render(gc, g);
@@ -86,10 +95,22 @@ public class Play extends BasicGameState implements Runnable {
 		int ypos = Mouse.getY();
 		mouse = "Mouse at x: " + xpos + " y: " + ypos;
 		
+		if(input.isMousePressed(0)) {
+			for(HitBox b: game.getMoles()) {
+				if(b.isWhacked(xpos, ypos)) {
+					player.addScore(100);
+					try {
+						inst.send("ACTION_"+game.toString());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
 		player.setCoords(xpos, ypos);
-		temp = player.toString();
 		try {
-			inst.send(player.toString());
+			inst.send("PLAYER_"+player.toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -110,21 +131,6 @@ public class Play extends BasicGameState implements Runnable {
 	public void start(String address, int port) {
 		inst = new PlayerThread(game, this, address, port);
 		inst.start();
-		
-		Thread t2 = new Thread(this);
-		t2.start();
-	}
-	
-	@Override
-	public void run() {
-		while(true) {
-			try {
-				// inst.send(player.toString());
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 	
 }

@@ -20,11 +20,10 @@ public class GameServerThread extends Thread {
 	public void run() {
 		System.out.println("Server listening");
 		try {
-	        byte[] buffer = new byte[256];
-	        
 	        DatagramSocket socket = new DatagramSocket(GameConfig.PORT);
-		
+	        
 			while(true) {
+		        byte[] buffer = new byte[256];
 				DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 		    	socket.receive(packet);
 		    	

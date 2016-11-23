@@ -44,7 +44,7 @@ public class GameState {
 		moles.add(new HitBox(910, 290));
 	}
 	
-	public String toString() {
+	public synchronized String toString() {
 		String temp = "";
 		for(Iterator<Integer> ite=players.keySet().iterator();ite.hasNext();) {
 			int key = ite.next();
