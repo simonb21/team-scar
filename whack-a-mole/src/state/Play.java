@@ -129,7 +129,7 @@ public class Play extends BasicGameState {
 	}
 	
 	public void start(String address, int port) {
-		inst = new PlayerThread(game, this, address, port);
+		inst = new PlayerThread(game, address, port);
 		inst.start();
 	}
 	

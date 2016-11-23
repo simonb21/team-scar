@@ -6,21 +6,20 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
+import config.GameConfig;
 import main.GameState;
 import main.Player;
 import state.Play;
 
 public class PlayerThread implements Runnable {
 
-	private Play screen;
 	private GameState game;
 	private String address;
 	private int port;
 	int i = 20;
 	
-	public PlayerThread(GameState game, Play screen, String address, int port) {
+	public PlayerThread(GameState game, String address, int port) {
 		this.game = game;
-		this.screen = screen;
 		this.address = address;
 		this.port = port;
 	}
@@ -58,7 +57,7 @@ public class PlayerThread implements Runnable {
 	
 	public synchronized void send(String message) throws IOException {
         byte[] buffer  = new byte[256];
-		InetAddress addr = InetAddress.getByName(address);
+		InetAddress addr = InetAddress.getByName(GameConfig.SERVER_NAME);
         DatagramSocket socket = new DatagramSocket();
         
         buffer = message.getBytes();
@@ -66,7 +65,7 @@ public class PlayerThread implements Runnable {
         		buffer,
         		buffer.length,
         		addr,
-        		port+10
+        		GameConfig.PORT
 		);
 
         socket.send(packet);

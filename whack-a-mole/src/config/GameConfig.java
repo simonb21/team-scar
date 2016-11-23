@@ -1,7 +1,6 @@
 package config;
 
 import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.UnknownHostException;
 
 public class GameConfig {
