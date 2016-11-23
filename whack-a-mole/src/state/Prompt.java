@@ -11,8 +11,6 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 import config.GameConfig;
-import main.GameState;
-import main.Player;
 import udp.game.GameServer;
 
 public class Prompt extends BasicGameState {

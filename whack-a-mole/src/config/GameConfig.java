@@ -1,5 +1,9 @@
 package config;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.UnknownHostException;
+
 public class GameConfig {
 	
 	// Application Properties 
@@ -13,8 +17,19 @@ public class GameConfig {
 	public static final int PLAY    = 3;
 	public static final int PROMPT  = 4;
 	
+	// Network
+    public static final String SERVER_NAME;
+    public static final int PORT    = 2100;
+	
 	// Constants
 	public static final int HOLES   = 21;
 	public static final int PLAYERS = 2;
 	
+	static {
+        try {
+            SERVER_NAME = InetAddress.getLocalHost().getHostName();
+        } catch (final UnknownHostException e) {
+            throw new Error("Failed to retrieve Server details.", e);
+        }
+    }
 }

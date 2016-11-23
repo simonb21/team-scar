@@ -67,7 +67,7 @@ public class Lobby extends BasicGameState {
 				((Play) sbg.getState(GameConfig.PLAY)).setGame(game);
 				((Play) sbg.getState(GameConfig.PLAY)).setPlayer(player);
 
-				((Play) sbg.getState(GameConfig.PLAY)).start("224.0.0.3", 2121);
+				((Play) sbg.getState(GameConfig.PLAY)).start(address, port);
 
 				sbg.enterState(GameConfig.PLAY);
 	        } else if(phase.equals("NEW")) {
@@ -79,10 +79,10 @@ public class Lobby extends BasicGameState {
 		        socket.joinGroup(addr);
 		    	socket.receive(packet);
 		    	
-		    	
 		    	message = new String(buffer, 0, buffer.length);
 		        socket.close();
 		        
+		        System.out.println("hey " +message);
 		        phase = message.trim();
 	        }
 		} catch (IOException e) {
@@ -99,7 +99,7 @@ public class Lobby extends BasicGameState {
 	
 	public void send(String message) throws IOException {
         byte[] buffer  = new byte[256];
-		InetAddress addr = InetAddress.getByName(address);
+		InetAddress addr = InetAddress.getByName(GameConfig.SERVER_NAME);
         DatagramSocket socket = new DatagramSocket();
         
         buffer = message.getBytes();
@@ -107,7 +107,7 @@ public class Lobby extends BasicGameState {
         		buffer,
         		buffer.length,
         		addr,
-        		port+10
+        		GameConfig.PORT
 		);
 		socket.send(packet);
 		socket.close();

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.Iterator;
 
 import config.GameConfig;
 import main.GameState;
@@ -28,7 +27,7 @@ public class GameServer implements Runnable {
 		this.game = new GameState();
 		game.init();
 		
-		Thread listener = new GameServerThread(this, address, port);
+		Thread listener = new GameServerThread(this);
 		listener.start();
 	}
 	
@@ -62,7 +61,7 @@ public class GameServer implements Runnable {
         socket.close();
 	}
 	
-	public void receive(String message) throws IOException {
+	public void receive(String message) throws IOException, InterruptedException {
 		message = message.trim();
 				
 		switch(phase) {
@@ -75,6 +74,7 @@ public class GameServer implements Runnable {
 				
 				if(playerCount == GameConfig.PLAYERS) {
 					send("START_" + game.toString());
+					Thread.sleep(100);
 					phase = "START";
 				} else send("CONNECTED");
 			}
