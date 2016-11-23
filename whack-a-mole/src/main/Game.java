@@ -1,42 +1,32 @@
 package main;
 
-import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.state.StateBasedGame;
+import java.security.SecureRandom;
 
-import config.GameConfig;
-import state.Lobby;
-import state.Menu;
-import state.Play;
-
-public class Game extends StateBasedGame {
+public class Game implements Runnable {
+	private GameState state;
 	
-	public Game() {
-		super(GameConfig.NAME);
-		
-		this.addState(new Menu());
+	public Game(GameState state) {
+		this.state = state;
 	}
 	
-	public void initStatesList(GameContainer gc) throws SlickException {
-		this.getState(GameConfig.MENU);
-		this.enterState(GameConfig.MENU);
-	}
-
-	public static void main(String[] args) {
-		AppGameContainer appgc;
+	@Override
+	public void run() {
+		SecureRandom rand = new SecureRandom();
 		
-		try {
-			appgc = new AppGameContainer(new Game());
-			appgc.setDisplayMode(
-				GameConfig.WIDTH,
-				GameConfig.HEIGHT,
-				false
-			);
-			appgc.start();
-		} catch (SlickException se) {
-			se.printStackTrace();
+		int next;
+		while(true) {
+			next = rand.nextInt(21);
+			
+			HitBox mole = state.getMoles().get(next);
+			
+			if(!mole.isAlive()) mole.start();
+			if(!mole.isRunning()) mole.setRunning(true);
+				
+			try {
+				Thread.sleep(800);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
-
 }
