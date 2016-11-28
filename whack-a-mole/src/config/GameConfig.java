@@ -8,8 +8,9 @@ public class GameConfig {
 	public static final int HEIGHT  = 600;
 	
 	// Game state identifiers
-	public static final int MENU    = 1;
-	public static final int LOBBY   = 2;
-	public static final int PLAY    = 3;
+	public static final int MENU     = 1;
+	public static final int LOBBY    = 2;
+	public static final int PLAY     = 3;
+	public static final int WAITING  = 4;
 	
 }
