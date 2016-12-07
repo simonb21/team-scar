@@ -11,6 +11,8 @@ import main.GameState;
 import main.Player;
 
 public class GameServer implements Runnable {
+	
+	public final int maxPlayers;
 
 	private GameState state;
 	private String address;
@@ -19,7 +21,8 @@ public class GameServer implements Runnable {
 	private int port;
 	int i=0;
 	
-	public GameServer(String address, int port) {
+	public GameServer(int max, String address, int port) {
+		this.maxPlayers = max;
 		this.address = address;
 		this.phase = "WAITING";
 		this.port = port;
@@ -76,12 +79,15 @@ public class GameServer implements Runnable {
 				state.addPlayer(new Player(data[1]));
 				playerCount += 1;
 				
-				if(playerCount == GameConfig.PLAYERS) {
+				if(playerCount == maxPlayers) {
 					send("START_" + state.toString());
-					Thread.sleep(100);
+					Thread.sleep(200);
 					phase = "START";
 				} else send("CONNECTED");
 			}
+			if(!phase.equals("START"))
+				send("WAITING_" + GameConfig.SERVER_NAME);
+			
 			break;
 		case "START":
 			// Update Player
@@ -107,8 +113,10 @@ public class GameServer implements Runnable {
 					
 					int index = Integer.parseInt(box[0]) % 21;
 					int up	  = Integer.parseInt(box[1]);
+					int type  = Integer.parseInt(box[2]);
 					
 					state.getMoles().get(index).setUp(up);
+					state.getMoles().get(index).setType(type);
 				}
 			}
 			

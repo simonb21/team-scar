@@ -16,12 +16,14 @@ import udp.game.GameServer;
 public class Prompt extends BasicGameState {
 	
 	private TextField nameField;
-	private TextField addrField;
-	private TextField portField;
+	private TextField portField1;
+	private TextField portField2;
+	private TextField maxField;
 	
 	private String username;
 	private String type;
-	private String port;
+	private int port;
+	private int max;
 	
 	private String mouse;
 	private Image hbg;
@@ -33,9 +35,10 @@ public class Prompt extends BasicGameState {
 	}
 	
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
-		nameField = new TextField(gc, gc.getDefaultFont(), 360, 285, 300, 30);
-		addrField = new TextField(gc, gc.getDefaultFont(), 360, 370, 200, 30);
-		portField = new TextField(gc, gc.getDefaultFont(), 570, 370, 90, 30);
+		nameField  = new TextField(gc, gc.getDefaultFont(), 360, 285, 300, 30);
+		maxField   = new TextField(gc, gc.getDefaultFont(), 360, 370, 180, 30);
+		portField1 = new TextField(gc, gc.getDefaultFont(), 550, 370, 110, 30);
+		portField2 = new TextField(gc, gc.getDefaultFont(), 360, 370, 300, 30);
 		
 		nameField.setMaxLength(10);
 		
@@ -51,8 +54,17 @@ public class Prompt extends BasicGameState {
 		}
 		
 		nameField.render(gc, g);
-		addrField.render(gc, g);
-		portField.render(gc, g);
+		
+		if(type.equals("host")) {
+			maxField.setLocation(360, 370);
+			portField1.setLocation(550, 370);
+			maxField.render(gc, g);
+			portField1.render(gc, g);
+		} else {
+			maxField.setLocation(360, 570);
+			portField1.setLocation(550, 570);
+			portField2.render(gc, g);
+		}
 		
 		g.drawString(mouse, 10, 580);
 	}
@@ -63,8 +75,9 @@ public class Prompt extends BasicGameState {
 		int ypos = Mouse.getY();
 		
 		mouse = "Mouse at x: " + xpos + " y: " + ypos;
+		
 		username = nameField.getText();
-		port = portField.getText();
+		
 		if((xpos>335 && xpos<445) && (ypos>125 && ypos<190)) {
 			if(input.isMousePressed(0)) {
 				clear();
@@ -73,22 +86,27 @@ public class Prompt extends BasicGameState {
 		}
 		
 		if((xpos>585 && xpos<695) && (ypos>125 && ypos<190)) {
-			if(input.isMousePressed(0) && !username.trim().equals("")) { // TODO
+			if(input.isMousePressed(0) && isValid()) { 
 				if(type.equals("host")) {
-					GameServer server = new GameServer("224.0.0.3", 2121);
+					port = Integer.parseInt(portField1.getText());
+					max  = Integer.parseInt(maxField.getText());
+					
+					GameServer server = new GameServer(max, GameConfig.ADDRESS, port);
 					
 					((Lobby) sbg.getState(GameConfig.LOBBY)).setServer(server);
 					((Lobby) sbg.getState(GameConfig.LOBBY)).setParams(
 							username,
-							"224.0.0.3",
-							2121
+							GameConfig.ADDRESS,
+							port
 					);
 					sbg.enterState(GameConfig.LOBBY);
 				} else {
+					port = Integer.parseInt(portField2.getText());
+					
 					((Lobby) sbg.getState(GameConfig.LOBBY)).setParams(
 							username,
-							"224.0.0.3",
-							2121
+							GameConfig.ADDRESS,
+							port
 					);
 					sbg.enterState(GameConfig.LOBBY);
 				}
@@ -102,7 +120,20 @@ public class Prompt extends BasicGameState {
 	}
 	
 	public boolean isValid() {
-		// TODO
+		if(username.trim().equals(""))
+			return false;
+		
+		if(type.equals("host")) {
+			if(maxField.getText().trim().equals(""))
+				return false;
+			
+			if(portField1.getText().trim().equals(""))
+				return false;
+		} else {
+			if(portField2.getText().trim().equals(""))
+				return false;
+		}
+
 		return true;
 	}
 	

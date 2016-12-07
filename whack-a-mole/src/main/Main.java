@@ -30,6 +30,7 @@ public class Main extends StateBasedGame {
 		
 		try {
 			appgc = new AppGameContainer(new Main());
+			appgc.setAlwaysRender(true);
 			appgc.setDisplayMode(
 				GameConfig.WIDTH,
 				GameConfig.HEIGHT,

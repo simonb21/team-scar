@@ -5,7 +5,7 @@ import java.net.UnknownHostException;
 
 public class Config {
     public static final String SERVER_NAME;
-    public static final int PORT = 2100;
+    public static final int PORT = 1800;
 
     static {
         try {

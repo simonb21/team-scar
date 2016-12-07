@@ -18,14 +18,19 @@ public class GameConfig {
 	
 	// Network
     public static final String SERVER_NAME;
-    public static final int PORT    = 2100;
+    public static final String ADDRESS = "224.0.0.5";
+    public static final int PORT       = 2100;
 	
 	// Constants
+    public static final int MAX_TIME   = 90;
 	public static final int HOLES      = 21;
-	public static final int PLAYERS    = 2;
 	public static final int MOLEWIDTH  = 70;
 	public static final int MOLEHEIGHT = 50;
 			
+	// Mole Types
+	public static final int M_REG      = 0;
+	public static final int M_GOLD     = 1;
+	public static final int M_BLACK    = 2;
 	
 	static {
         try {

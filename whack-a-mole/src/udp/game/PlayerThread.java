@@ -5,11 +5,11 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.Socket;
 
 import config.GameConfig;
 import main.GameState;
 import main.Player;
-import state.Play;
 
 public class PlayerThread implements Runnable {
 
@@ -49,8 +49,10 @@ public class PlayerThread implements Runnable {
 			
 			int index = Integer.parseInt(box[0]) % 21;
 			int state = Integer.parseInt(box[1]);
+			int mtype  = Integer.parseInt(box[2]);
 			
 			game.getMoles().get(index).setUp(state);
+			game.getMoles().get(index).setType(mtype);
 			
 		}
 	}
@@ -76,12 +78,12 @@ public class PlayerThread implements Runnable {
 		System.out.println("Client running");
 		try {
 			InetAddress addr = InetAddress.getByName(address);
-	        byte[] buffer  = new byte[256];
 	       
 	        MulticastSocket socket = new MulticastSocket(port);
 	        socket.joinGroup(addr);
 	        
 	        while(true) {
+		        byte[] buffer  = new byte[256];
 	        	DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 		    	socket.receive(packet);
 		       
@@ -92,7 +94,6 @@ public class PlayerThread implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
 
 	public void start() {
 		Thread t = new Thread(this);

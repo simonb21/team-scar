@@ -13,6 +13,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
+import chat.Server;
 import config.GameConfig;
 import main.GameState;
 import main.Player;
@@ -21,9 +22,11 @@ import udp.game.GameServer;
 public class Lobby extends BasicGameState {
 	
 	private GameServer server;
+	private Server chatServer;
 	private Player player;
 	private String username;
 	private String address;
+	private String serverAddr;
 	private String phase;
 	private int port;
 	
@@ -40,7 +43,6 @@ public class Lobby extends BasicGameState {
 	}
 	
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
-		
 		g.drawString(info, 10, 50);
 		
 		g.drawString(phase, 10, 550);
@@ -62,35 +64,41 @@ public class Lobby extends BasicGameState {
 	        if(phase.startsWith("START")) {
 				GameState game = parseGame();
 				
-				if(server != null) server.start();
+				if(server != null) {
+					server.start();
+					chatServer.start();
+				}
 
 				((Play) sbg.getState(GameConfig.PLAY)).setGame(game);
 				((Play) sbg.getState(GameConfig.PLAY)).setPlayer(player);
+				((Play) sbg.getState(GameConfig.PLAY)).addChatClient();
 
 				((Play) sbg.getState(GameConfig.PLAY)).start(address, port);
+				((Play) sbg.getState(GameConfig.PLAY)).countDown();
 
 				sbg.enterState(GameConfig.PLAY);
 	        } else if(phase.equals("NEW")) {
 	        	send("JOIN;" + username);
-	        }
+	        } 
 	        
-	        if(!phase.startsWith("START")) {
-		    	DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-		        socket.joinGroup(addr);
-		    	socket.receive(packet);
-		    	
-		    	message = new String(buffer, 0, buffer.length);
-		        socket.close();
-		        
-		        System.out.println("hey " +message);
-		        phase = message.trim();
+	    	DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+	        socket.joinGroup(addr);
+	    	socket.receive(packet);
+	    	
+	    	message = new String(buffer, 0, buffer.length);
+	        socket.close();
+	        
+	        phase = message.trim();
+	        if(message.startsWith("WAITING")) {
+	        	String[] data = phase.split("_");
+	        	serverAddr = data[1];
 	        }
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		if(server == null) info = "Connected to Host";
-		else info = "Waiting for Players " + server.getPlayerCount() + "/" + GameConfig.PLAYERS;
+		else info = "Waiting for Players " + server.getPlayerCount() + "/" + server.maxPlayers;
 	}
 	
 	public int getID() {
@@ -99,7 +107,7 @@ public class Lobby extends BasicGameState {
 	
 	public void send(String message) throws IOException {
         byte[] buffer  = new byte[256];
-		InetAddress addr = InetAddress.getByName(GameConfig.SERVER_NAME);
+		InetAddress addr = InetAddress.getByName(serverAddr);
         DatagramSocket socket = new DatagramSocket();
         
         buffer = message.getBytes();
@@ -116,6 +124,7 @@ public class Lobby extends BasicGameState {
 	
 	public void setServer(GameServer s) {
 		this.server = s;
+		this.chatServer = new Server();
 	}
 	
 	public void setParams(String s, String addr, int p) {
