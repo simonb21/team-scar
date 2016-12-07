@@ -47,6 +47,10 @@ public class Player {
 		score += points;
 	}
 	
+	public void subScore(int points) {
+		score -= points;
+	}
+	
 	public synchronized String toString() {
 		String temp = "";
 		temp += this.name	+ ",";

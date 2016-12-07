@@ -5,7 +5,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.net.Socket;
 
 import config.GameConfig;
 import main.GameState;
@@ -27,10 +26,19 @@ public class PlayerThread implements Runnable {
 	public void update(String data) {
 		data = data.trim();
 		
+		if(data.equals("ENDGAME")) {
+			game.setEnd(true);
+			return;
+		}
+		
 		String[] type = data.split("_");
 		
+		// Update Time
+		int time = Integer.parseInt(type[0]);
+		game.setTime(time);
+		
 		// Update Player
-		for(String temp: type[0].split(";")) {
+		for(String temp: type[1].split(";")) {
 			String[] player = temp.split(",");
 
 			int id    = Integer.parseInt(player[1]);
@@ -44,7 +52,7 @@ public class PlayerThread implements Runnable {
 		}
 		
 		// Update Board
-		for(String temp: type[1].split(";")) {
+		for(String temp: type[2].split(";")) {
 			String[] box = temp.split(",");
 			
 			int index = Integer.parseInt(box[0]) % 21;

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import config.GameConfig;
 import main.Game;
@@ -108,7 +110,7 @@ public class GameServer implements Runnable {
 			// Update Board
 			if(message.startsWith("ACTION")) {
 				String[] msg  = message.split("_");
-				for(String temp: msg[2].split(";")) {
+				for(String temp: msg[3].split(";")) {
 					String[] box = temp.split(",");
 					
 					int index = Integer.parseInt(box[0]) % 21;
@@ -122,7 +124,25 @@ public class GameServer implements Runnable {
 			
 			send(state.toString());
 			break;
+			
+		case "ENDGAME":
+			state.setEnd(true);
+			send(phase);
+			break;
 		}
+	}
+	
+	public void countDown() {
+		final Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+            	state.timeDown();
+                if (state.getTime()<0) {
+                	timer.cancel();
+                	phase = "ENDGAME";
+                }
+            }
+        }, 0, 1000);
 	}
 	
 	@Override

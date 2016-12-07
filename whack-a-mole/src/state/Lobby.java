@@ -66,6 +66,7 @@ public class Lobby extends BasicGameState {
 				
 				if(server != null) {
 					server.start();
+					server.countDown();
 					chatServer.start();
 				}
 
@@ -74,7 +75,6 @@ public class Lobby extends BasicGameState {
 				((Play) sbg.getState(GameConfig.PLAY)).addChatClient();
 
 				((Play) sbg.getState(GameConfig.PLAY)).start(address, port);
-				((Play) sbg.getState(GameConfig.PLAY)).countDown();
 
 				sbg.enterState(GameConfig.PLAY);
 	        } else if(phase.equals("NEW")) {
@@ -138,7 +138,7 @@ public class Lobby extends BasicGameState {
 		game.init();
 		
 		String[] message = phase.split("_");
-		for(String player: message[1].split(";")) {
+		for(String player: message[2].split(";")) {
 			String[] data = player.split(",");
 			
 			int id = Integer.parseInt(data[1]);

@@ -15,6 +15,7 @@ public class GameConfig {
 	public static final int LOBBY      = 2;
 	public static final int PLAY       = 3;
 	public static final int PROMPT     = 4;
+	public static final int END        = 5;
 	
 	// Network
     public static final String SERVER_NAME;
@@ -22,7 +23,7 @@ public class GameConfig {
     public static final int PORT       = 2100;
 	
 	// Constants
-    public static final int MAX_TIME   = 90;
+    public static final int MAX_TIME   = 10;
 	public static final int HOLES      = 21;
 	public static final int MOLEWIDTH  = 70;
 	public static final int MOLEHEIGHT = 50;

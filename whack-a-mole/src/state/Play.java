@@ -1,16 +1,18 @@
 package state;
 
+import java.awt.Font;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.lwjgl.input.Mouse;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Sound;
+import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.gui.TextField;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
@@ -34,13 +36,13 @@ public class Play extends BasicGameState {
 	private Image mole_r;
 	private Image mole_g;
 	private Image mole_b;
+	private Sound whack;
 	private TextField in;
 	private TextField out;
-	private String mouse;
 	private PlayerThread inst;
+	private TrueTypeFont timeFont;
 
 	public Play() {
-		this.mouse = "No Input Yet.";
 		this.time  = GameConfig.MAX_TIME;
 	}
 	
@@ -56,13 +58,17 @@ public class Play extends BasicGameState {
 		mole_r = new Image("res/mole.png");
 		mole_g = new Image("res/mole_g.png");
 		mole_b = new Image("res/mole_b.png");
+		
+		whack = new Sound("res/whack.wav");
+		
+		timeFont = new TrueTypeFont(new Font("Arial", Font.BOLD, 32), false);
 	}
 	
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
 		g.drawImage(bg, 0, 0);
 		g.drawImage(gbg, 256, 0);
-		g.drawString(mouse, 10, 580);
-		g.drawString(String.valueOf(time), 15, 400);
+
+		timeFont.drawString(95, 380, String.valueOf(time) +"s", Color.white);
 		
 		for(HitBox b: game.getMoles()) {
 			if(b.getUp() == 1) {
@@ -120,7 +126,25 @@ public class Play extends BasicGameState {
 		Input input = gc.getInput();
 		int xpos = Mouse.getX();
 		int ypos = Mouse.getY();
-		mouse = "Mouse at x: " + xpos + " y: " + ypos;
+		time  = game.getTime();
+		
+		if(game.getEnd()) {
+			int max = 0;
+			for(Iterator<Integer> ite=game.getPlayers().keySet().iterator();ite.hasNext();) {
+				int key = ite.next();
+				Player p = game.getPlayers().get(key);
+				
+				if(p.getScore()>max)
+					max = p.getScore();
+			}
+			
+			if(max != player.getScore()) {
+				((End) sbg.getState(GameConfig.END)).setWon(false);
+			}
+				
+			((End) sbg.getState(GameConfig.END)).setPlayer(player);
+			sbg.enterState(GameConfig.END);
+		}
 		
 		if(in.hasFocus() && input.isKeyPressed(Input.KEY_ENTER)) {
 			chatClient.send(in.getText());
@@ -130,7 +154,14 @@ public class Play extends BasicGameState {
 		if(input.isMousePressed(0)) {
 			for(HitBox b: game.getMoles()) {
 				if(b.isWhacked(xpos, ypos)) {
-					player.addScore(100);
+					whack.play();
+					
+					switch(b.getType()) {
+					case GameConfig.M_REG: player.addScore(50);
+					case GameConfig.M_GOLD: player.addScore(150);
+					case GameConfig.M_BLACK: player.subScore(100);
+					}
+					
 					try {
 						inst.send("ACTION_"+game.toString());
 					} catch (IOException e) {
@@ -154,17 +185,6 @@ public class Play extends BasicGameState {
 
 	public void setGame(GameState g) {
 		this.game = g;
-	}
-	
-	public void countDown() {
-		final Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            public void run() {
-            	time--;
-                if (time<0)
-                    timer.cancel();
-            }
-        }, 0, 1000);
 	}
 	
 	public void addChatClient() {

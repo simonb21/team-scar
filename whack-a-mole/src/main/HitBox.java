@@ -1,6 +1,6 @@
 package main;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 import config.GameConfig;
 
@@ -74,24 +74,24 @@ public class HitBox extends Thread{
 	public void run() {
 		while(true) {
 			if(isRunning()){
-				Random rand = new Random();
-				if(rand.nextInt(20) == 0) {
-					if(rand.nextInt(2) == 0) {
-						type = GameConfig.M_GOLD;
-					} else {
-						type = GameConfig.M_BLACK;
-					}
+				SecureRandom rand = new SecureRandom();
+				int x = rand.nextInt(20);
+				if(x == 0) {
+					type = GameConfig.M_GOLD;
+				} else if(x<12) {
+					type = GameConfig.M_BLACK;
 				}
 				
 				up = 1;
 				
 				try {
-					Thread.sleep(3500);
+					Thread.sleep(1500);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				
 				up = 0;
+				type = 0;
 				running = false;
 			}
 		}

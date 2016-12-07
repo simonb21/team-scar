@@ -6,6 +6,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 import config.GameConfig;
+import state.End;
 import state.Lobby;
 import state.Menu;
 import state.Play;
@@ -22,6 +23,7 @@ public class Main extends StateBasedGame {
 		this.addState(new Prompt());
 		this.addState(new Lobby());
 		this.addState(new Play());
+		this.addState(new End());
 		this.enterState(GameConfig.MENU);
 	}
 

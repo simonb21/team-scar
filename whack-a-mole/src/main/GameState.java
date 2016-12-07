@@ -4,14 +4,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import config.GameConfig;
+
 public class GameState {
 	
+	private int time;
+	private boolean endgame;
 	private HashMap<Integer, Player> players;
 	private ArrayList<HitBox> moles;
 	
 	public GameState() {
 		players = new HashMap<Integer, Player>();
 		moles   = new ArrayList<HitBox>();
+		time    = GameConfig.MAX_TIME;
+		endgame = false;
 	}
 	
 	public void init() {
@@ -46,6 +52,8 @@ public class GameState {
 	
 	public synchronized String toString() {
 		String temp = "";
+		temp += String.valueOf(time);
+		temp += "_";
 		for(Iterator<Integer> ite=players.keySet().iterator();ite.hasNext();) {
 			int key = ite.next();
 			temp += players.get(key).toString();
@@ -64,12 +72,32 @@ public class GameState {
 		players.put(p.id, p);
 	}
 	
+	public void setTime(int t) {
+		time = t;
+	}
+	
+	public void setEnd(boolean b) {
+		endgame = b;
+	}
+	
+	public void timeDown() {
+		time -= 1;
+	}
+	
 	public HashMap<Integer, Player> getPlayers() {
 		return players;
 	}
 
 	public ArrayList<HitBox> getMoles() {
 		return moles;
+	}
+	
+	public int getTime() {
+		return time;
+	}
+	
+	public boolean getEnd() {
+		return endgame;
 	}
 	
 }
