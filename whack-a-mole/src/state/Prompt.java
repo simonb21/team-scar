@@ -91,7 +91,8 @@ public class Prompt extends BasicGameState {
 					port = Integer.parseInt(portField1.getText());
 					max  = Integer.parseInt(maxField.getText());
 					
-					GameServer server = new GameServer(max, GameConfig.ADDRESS, port);
+					GameServer server = new GameServer(username, max, GameConfig.ADDRESS, port);
+					server.start();
 					
 					((Lobby) sbg.getState(GameConfig.LOBBY)).setServer(server);
 					((Lobby) sbg.getState(GameConfig.LOBBY)).setParams(

@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import config.Config;
+import config.GameConfig;
 import state.Play;
 
 /*******************************************************************************
@@ -20,17 +21,18 @@ public class Client {
     private DataOutputStream out;
     private boolean connected;
 
-    public Client(String name, Play state) {
+    public Client(String serverAddr, String name, Play state) {
         this.name  = name;
         this.state = state;
 
         try {
-            socket = new Socket(Config.SERVER_NAME, Config.PORT);
+            socket = new Socket(serverAddr, Config.PORT);
             System.out.println("Connected: " + socket);
         } catch (UnknownHostException uhe) {
             System.out.println("Host not found.\n" + uhe);
         } catch (IOException ioe) {
-            System.out.println("Client Connection failed.\n" + ioe);
+            System.out.println("Client Connection failed.\n");
+            ioe.printStackTrace();
         }
     }
 

@@ -30,6 +30,7 @@ public class Play extends BasicGameState {
 	private GameState game;
 	private Player player;
 	private Client chatClient;
+	private String serverAddr;
 	
 	private Image bg;
 	private Image gbg;
@@ -154,13 +155,13 @@ public class Play extends BasicGameState {
 		if(input.isMousePressed(0)) {
 			for(HitBox b: game.getMoles()) {
 				if(b.isWhacked(xpos, ypos)) {
-					whack.play();
-					
 					switch(b.getType()) {
-					case GameConfig.M_REG: player.addScore(50);
-					case GameConfig.M_GOLD: player.addScore(150);
-					case GameConfig.M_BLACK: player.subScore(100);
+					case GameConfig.M_REG: player.addScore(50); break;
+					case GameConfig.M_GOLD: player.addScore(150); break;
+					case GameConfig.M_BLACK: player.subScore(100); break;
 					}
+					
+					whack.play();
 					
 					try {
 						inst.send("ACTION_"+game.toString());
@@ -188,7 +189,7 @@ public class Play extends BasicGameState {
 	}
 	
 	public void addChatClient() {
-		this.chatClient = new Client(player.name, this);
+		this.chatClient = new Client(serverAddr, player.name, this);
 		this.chatClient.start();
 	}
 	
@@ -216,8 +217,12 @@ public class Play extends BasicGameState {
 		this.player = p;
 	}
 	
-	public void start(String address, int port) {
-		inst = new PlayerThread(game, address, port);
+	public void setServerName(String s) {
+		this.serverAddr = s;
+	}
+	
+	public void start(String serverAddr, String address, int port) {
+		inst = new PlayerThread(game, serverAddr, address, port);
 		inst.start();
 	}
 	

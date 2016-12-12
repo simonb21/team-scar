@@ -1,5 +1,8 @@
 package main;
 
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Sound;
+
 public class Player {
 	
 	private static int count;
@@ -8,6 +11,8 @@ public class Player {
 	private int score;
 	private int xpos;
 	private int ypos;
+	
+	private Sound whack;
 	
 	public Player(String name) {
 		this.name  = name;
@@ -30,11 +35,11 @@ public class Player {
 		return ypos;
 	}
 	
-	public int getScore() {
+	public synchronized int getScore() {
 		return score;
 	}
 
-	public void setScore(int score) {
+	public synchronized void setScore(int score) {
 		this.score = score;
 	}
 	
@@ -43,11 +48,11 @@ public class Player {
 		this.ypos = y;
 	}
 	
-	public void addScore(int points) {
+	public synchronized void addScore(int points) {
 		score += points;
 	}
 	
-	public void subScore(int points) {
+	public synchronized void subScore(int points) {
 		score -= points;
 	}
 	

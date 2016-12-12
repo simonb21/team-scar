@@ -14,12 +14,14 @@ public class PlayerThread implements Runnable {
 
 	private GameState game;
 	private String address;
+	private String serverAddr;
 	private int port;
 	int i = 20;
 	
-	public PlayerThread(GameState game, String address, int port) {
+	public PlayerThread(GameState game, String serverAddr, String address, int port) {
 		this.game = game;
 		this.address = address;
+		this.serverAddr = serverAddr;
 		this.port = port;
 	}
 	
@@ -30,6 +32,9 @@ public class PlayerThread implements Runnable {
 			game.setEnd(true);
 			return;
 		}
+		
+		if(data.startsWith("WAITING"))
+			return;
 		
 		String[] type = data.split("_");
 		
@@ -67,7 +72,7 @@ public class PlayerThread implements Runnable {
 	
 	public synchronized void send(String message) throws IOException {
         byte[] buffer  = new byte[256];
-		InetAddress addr = InetAddress.getByName(GameConfig.SERVER_NAME);
+		InetAddress addr = InetAddress.getByName(serverAddr);
         DatagramSocket socket = new DatagramSocket();
         
         buffer = message.getBytes();
