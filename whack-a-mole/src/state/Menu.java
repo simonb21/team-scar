@@ -48,21 +48,21 @@ public class Menu extends BasicGameState {
 		mouse = "Mouse at x: " + xpos + " y: " + ypos;
 		
 		if((xpos>340 && xpos<680) && (ypos>250 && ypos<320)) { //Create lobby
-			if(input.isMouseButtonDown(0)) {
+			if(input.isMousePressed(0)) {
 				((Prompt) sbg.getState(GameConfig.PROMPT)).setType("host");
 				sbg.enterState(GameConfig.PROMPT);
 			}
 		}
 		
 		if((xpos>340 && xpos<680) && (ypos>170 && ypos<240)) { //Join lobby
-			if(input.isMouseButtonDown(0)) {
+			if(input.isMousePressed(0)) {
 				((Prompt) sbg.getState(GameConfig.PROMPT)).setType("client");
 				sbg.enterState(GameConfig.PROMPT);
 			}
 		}
 		
 		if((xpos>340 && xpos<680) && (ypos>90 && ypos<160)) { //Exit
-			if(input.isMouseButtonDown(0)) {
+			if(input.isMousePressed(0)) {
 				System.out.println("sad");
 				System.exit(0);
 			}

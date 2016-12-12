@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import config.GameConfig;
 import main.Game;
@@ -11,7 +13,10 @@ import main.GameState;
 import main.Player;
 
 public class GameServer implements Runnable {
-
+	
+	public final int maxPlayers;
+	public final String host;
+	
 	private GameState state;
 	private String address;
 	private String phase;
@@ -19,7 +24,9 @@ public class GameServer implements Runnable {
 	private int port;
 	int i=0;
 	
-	public GameServer(String address, int port) {
+	public GameServer(String host, int max, String address, int port) {
+		this.host = host;
+		this.maxPlayers = max;
 		this.address = address;
 		this.phase = "WAITING";
 		this.port = port;
@@ -76,11 +83,14 @@ public class GameServer implements Runnable {
 				state.addPlayer(new Player(data[1]));
 				playerCount += 1;
 				
-				if(playerCount == GameConfig.PLAYERS) {
+				if(playerCount == maxPlayers) {
 					send("START_" + state.toString());
-					Thread.sleep(100);
+					Thread.sleep(200);
 					phase = "START";
-				} else send("CONNECTED");
+				} else {
+					System.out.println("Sending host " +host );
+					send("CONNECTED_"+host);
+				}
 			}
 			break;
 		case "START":
@@ -102,19 +112,39 @@ public class GameServer implements Runnable {
 			// Update Board
 			if(message.startsWith("ACTION")) {
 				String[] msg  = message.split("_");
-				for(String temp: msg[2].split(";")) {
+				for(String temp: msg[3].split(";")) {
 					String[] box = temp.split(",");
 					
 					int index = Integer.parseInt(box[0]) % 21;
 					int up	  = Integer.parseInt(box[1]);
+					int type  = Integer.parseInt(box[2]);
 					
 					state.getMoles().get(index).setUp(up);
+					state.getMoles().get(index).setType(type);
 				}
 			}
 			
 			send(state.toString());
 			break;
+			
+		case "ENDGAME":
+			state.setEnd(true);
+			send(phase);
+			break;
 		}
+	}
+	
+	public void countDown() {
+		final Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+            	state.timeDown();
+                if (state.getTime()<0) {
+                	timer.cancel();
+                	phase = "ENDGAME";
+                }
+            }
+        }, 0, 1000);
 	}
 	
 	@Override
@@ -122,10 +152,11 @@ public class GameServer implements Runnable {
 		System.out.println("Server running");
 		try {
 	        while(true) {
-//	        	state.getMoles().get(i).toggle();
-//	            i = (i+1)%21;
-	            
-	        	send(state.toString());
+				if(phase.equals("WAITING"))
+					send("WAITING_" + GameConfig.SERVER_NAME + "_" + state.toString());
+				else if(phase.equals("START")){
+		        	send(state.toString());
+				}
 			    Thread.sleep(300);
 	       }
 		} catch (IOException e) {

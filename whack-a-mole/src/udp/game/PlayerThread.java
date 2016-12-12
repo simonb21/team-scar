@@ -9,28 +9,41 @@ import java.net.MulticastSocket;
 import config.GameConfig;
 import main.GameState;
 import main.Player;
-import state.Play;
 
 public class PlayerThread implements Runnable {
 
 	private GameState game;
 	private String address;
+	private String serverAddr;
 	private int port;
 	int i = 20;
 	
-	public PlayerThread(GameState game, String address, int port) {
+	public PlayerThread(GameState game, String serverAddr, String address, int port) {
 		this.game = game;
 		this.address = address;
+		this.serverAddr = serverAddr;
 		this.port = port;
 	}
 	
 	public void update(String data) {
 		data = data.trim();
 		
+		if(data.equals("ENDGAME")) {
+			game.setEnd(true);
+			return;
+		}
+		
+		if(data.startsWith("WAITING"))
+			return;
+		
 		String[] type = data.split("_");
 		
+		// Update Time
+		int time = Integer.parseInt(type[0]);
+		game.setTime(time);
+		
 		// Update Player
-		for(String temp: type[0].split(";")) {
+		for(String temp: type[1].split(";")) {
 			String[] player = temp.split(",");
 
 			int id    = Integer.parseInt(player[1]);
@@ -44,20 +57,22 @@ public class PlayerThread implements Runnable {
 		}
 		
 		// Update Board
-		for(String temp: type[1].split(";")) {
+		for(String temp: type[2].split(";")) {
 			String[] box = temp.split(",");
 			
 			int index = Integer.parseInt(box[0]) % 21;
 			int state = Integer.parseInt(box[1]);
+			int mtype  = Integer.parseInt(box[2]);
 			
 			game.getMoles().get(index).setUp(state);
+			game.getMoles().get(index).setType(mtype);
 			
 		}
 	}
 	
 	public synchronized void send(String message) throws IOException {
         byte[] buffer  = new byte[256];
-		InetAddress addr = InetAddress.getByName(GameConfig.SERVER_NAME);
+		InetAddress addr = InetAddress.getByName(serverAddr);
         DatagramSocket socket = new DatagramSocket();
         
         buffer = message.getBytes();
@@ -76,12 +91,12 @@ public class PlayerThread implements Runnable {
 		System.out.println("Client running");
 		try {
 			InetAddress addr = InetAddress.getByName(address);
-	        byte[] buffer  = new byte[256];
 	       
 	        MulticastSocket socket = new MulticastSocket(port);
 	        socket.joinGroup(addr);
 	        
 	        while(true) {
+		        byte[] buffer  = new byte[256];
 	        	DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 		    	socket.receive(packet);
 		       
@@ -92,7 +107,6 @@ public class PlayerThread implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
 
 	public void start() {
 		Thread t = new Thread(this);

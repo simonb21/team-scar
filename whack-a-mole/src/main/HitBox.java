@@ -1,5 +1,7 @@
 package main;
 
+import java.security.SecureRandom;
+
 import config.GameConfig;
 
 public class HitBox extends Thread{
@@ -9,12 +11,14 @@ public class HitBox extends Thread{
 	public final int y;
 	public final int id;
 	private boolean running;
+	private int type;
 	private int up;
 	
 	public HitBox(int x, int y) {
 		this.x = x;
 		this.y = y;
 		this.up = 0;
+		this.type = 0;
 		this.running = false;
 		
 		this.id = count++;
@@ -22,6 +26,10 @@ public class HitBox extends Thread{
 	
 	public int getUp() {
 		return up;
+	}
+	
+	public int getType() {
+		return type;
 	}
 	
 	public boolean isWhacked(int xpos, int ypos) {
@@ -46,6 +54,10 @@ public class HitBox extends Thread{
 		up = v;
 	}
 	
+	public void setType(int t) {
+		type = t;
+	}
+	
 	public void toggle() {
 		up = (up+1)%2;
 	}
@@ -53,7 +65,8 @@ public class HitBox extends Thread{
 	public String toString() {
 		String temp = "";
 		temp += Integer.toString(id) + ",";
-		temp += Integer.toString(up);
+		temp += Integer.toString(up) + ",";
+		temp += Integer.toString(type);
 		
 		return temp;
 	}
@@ -61,15 +74,24 @@ public class HitBox extends Thread{
 	public void run() {
 		while(true) {
 			if(isRunning()){
+				SecureRandom rand = new SecureRandom();
+				int x = rand.nextInt(20);
+				if(x == 0) {
+					type = GameConfig.M_GOLD;
+				} else if(x<12) {
+					type = GameConfig.M_BLACK;
+				}
+				
 				up = 1;
 				
 				try {
-					Thread.sleep(3500);
+					Thread.sleep(1500);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				
 				up = 0;
+				type = 0;
 				running = false;
 			}
 		}

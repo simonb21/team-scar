@@ -23,7 +23,7 @@ public class Game implements Runnable {
 			if(!mole.isRunning()) mole.setRunning(true);
 				
 			try {
-				Thread.sleep(800);
+				Thread.sleep(150);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
